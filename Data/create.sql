@@ -1,5 +1,4 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2023-04-17 19:17:29.7
 
 -- tables
 -- Table: Doctor
