@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
 
 namespace Kol1.Controllers
 {
