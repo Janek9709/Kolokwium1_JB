@@ -1,88 +1,107 @@
 -- Created by Vertabelo (http://vertabelo.com)
+-- Last modification date: 2023-06-05 16:43:22.858
 
 -- tables
--- Table: Doctor
-CREATE TABLE Doctor (
+-- Table: Category
+CREATE TABLE Category (
     Id int  NOT NULL IDENTITY,
-    Name varchar(255)  NOT NULL,
-    LastName varchar(255)  NOT NULL,
-    Specialization_Id int  NOT NULL,
-    CONSTRAINT Doctor_pk PRIMARY KEY  (Id)
+    Name nvarchar(255)  NOT NULL,
+    CONSTRAINT Category_pk PRIMARY KEY  (Id)
 );
 
--- Table: Medicine
-CREATE TABLE Medicine (
+-- Table: Customer
+CREATE TABLE Customer (
     Id int  NOT NULL IDENTITY,
-    Name varchar(255)  NOT NULL,
-    CONSTRAINT Medicine_pk PRIMARY KEY  (Id)
+    FirstName nvarchar(255)  NOT NULL,
+    LastName nvarchar(255)  NOT NULL,
+    CONSTRAINT Customer_pk PRIMARY KEY  (Id)
 );
 
--- Table: Patient
-CREATE TABLE Patient (
+-- Table: CustomerOrder
+CREATE TABLE CustomerOrder (
     Id int  NOT NULL IDENTITY,
-    Name varchar(255)  NOT NULL,
-    LastName varchar(255)  NOT NULL,
-    DateOfBirth datetime  NOT NULL,
-    CONSTRAINT Patient_pk PRIMARY KEY  (Id)
+    Customer_Id int  NOT NULL,
+    SubmissionDate datetime  NOT NULL,
+    CONSTRAINT CustomerOrder_pk PRIMARY KEY  (Id)
 );
 
--- Table: Prescription
-CREATE TABLE Prescription (
+-- Table: Product
+CREATE TABLE Product (
     Id int  NOT NULL IDENTITY,
-    Doctor_Id int  NOT NULL,
-    Patient_Id int  NOT NULL,
-    Medicine_Id int  NOT NULL,
+    Name nvarchar(255)  NOT NULL,
+    Price int  NOT NULL,
+    Category_Id int  NOT NULL,
+    CONSTRAINT Product_pk PRIMARY KEY  (Id)
+);
+
+-- Table: ProductOrder
+CREATE TABLE ProductOrder (
+    Product_Id int  NOT NULL,
+    CustomerOrder_Id int  NOT NULL,
     Amount int  NOT NULL,
-    CreatedAt datetime  NOT NULL,
-    CONSTRAINT Prescription_pk PRIMARY KEY  (Id)
-);
-
--- Table: Specialization
-CREATE TABLE Specialization (
-    Id int  NOT NULL IDENTITY,
-    Name varchar(255)  NOT NULL,
-    CONSTRAINT Specialization_pk PRIMARY KEY  (Id)
+    CONSTRAINT ProductOrder_pk PRIMARY KEY  (Product_Id,CustomerOrder_Id)
 );
 
 -- foreign keys
--- Reference: Doctor_Specialization (table: Doctor)
-ALTER TABLE Doctor ADD CONSTRAINT Doctor_Specialization
-    FOREIGN KEY (Specialization_Id)
-    REFERENCES Specialization (Id);
+-- Reference: Order_Customer (table: CustomerOrder)
+ALTER TABLE CustomerOrder ADD CONSTRAINT Order_Customer
+    FOREIGN KEY (Customer_Id)
+    REFERENCES Customer (Id);
 
--- Reference: Prescription_Doctor (table: Prescription)
-ALTER TABLE Prescription ADD CONSTRAINT Prescription_Doctor
-    FOREIGN KEY (Doctor_Id)
-    REFERENCES Doctor (Id);
+-- Reference: ProductOrder_CustomerOrder (table: ProductOrder)
+ALTER TABLE ProductOrder ADD CONSTRAINT ProductOrder_CustomerOrder
+    FOREIGN KEY (CustomerOrder_Id)
+    REFERENCES CustomerOrder (Id);
 
--- Reference: Prescription_Medicine (table: Prescription)
-ALTER TABLE Prescription ADD CONSTRAINT Prescription_Medicine
-    FOREIGN KEY (Medicine_Id)
-    REFERENCES Medicine (Id);
+-- Reference: ProductOrder_Product (table: ProductOrder)
+ALTER TABLE ProductOrder ADD CONSTRAINT ProductOrder_Product
+    FOREIGN KEY (Product_Id)
+    REFERENCES Product (Id);
 
--- Reference: Prescription_Patient (table: Prescription)
-ALTER TABLE Prescription ADD CONSTRAINT Prescription_Patient
-    FOREIGN KEY (Patient_Id)
-    REFERENCES Patient (Id);
+-- Reference: Product_Category (table: Product)
+ALTER TABLE Product ADD CONSTRAINT Product_Category
+    FOREIGN KEY (Category_Id)
+    REFERENCES Category (Id);
 
 -- End of file.
+
 GO
--- Specialization table data
-INSERT INTO Specialization (Name)
-VALUES ('Cardiology'), ('Dermatology'), ('Endocrinology'), ('Gastroenterology');
-GO
--- Doctor table data
-INSERT INTO Doctor (Name, LastName, Specialization_Id)
-VALUES ('John', 'Doe', 1), ('Jane', 'Smith', 2), ('Bob', 'Johnson', 3), ('Sara', 'Lee', 4);
-GO
--- Medicine table data
-INSERT INTO Medicine (Name)
-VALUES ('Lipitor'), ('Zoloft'), ('Metformin'), ('Prilosec');
-GO
--- Patient table data
-INSERT INTO Patient (Name, LastName, DateOfBirth)
-VALUES ('Michael', 'Smith', '1980-01-01'), ('Emily', 'Smith', '1975-05-05'), ('David', 'Lee', '1990-10-10'), ('Julia', 'Davis', '1965-03-15');
-GO
--- Prescription table data
-INSERT INTO Prescription (Doctor_Id, Patient_Id, Medicine_Id, Amount, CreatedAt)
-VALUES (1, 2, 3, 30, '2022-01-01'), (2, 3, 1, 90, '2022-02-01'), (3, 1, 2, 60, '2022-03-01'), (4, 4, 4, 120, '2022-04-01');
+
+
+INSERT INTO Category (Name) VALUES
+('Electronics'),
+('Clothing'),
+('Books'),
+('Home Appliances');
+
+INSERT INTO Customer (FirstName, LastName) VALUES
+('John', 'Doe'),
+('Jane', 'Smith'),
+('Michael', 'Johnson');
+
+INSERT INTO CustomerOrder (Customer_Id, SubmissionDate) VALUES
+(1, '2023-06-01 10:00:00'),
+(1, '2023-06-02 14:30:00'),
+(2, '2023-06-02 09:15:00'),
+(3, '2023-06-03 16:45:00'),
+(3, '2023-06-04 11:30:00');
+
+INSERT INTO Product (Name, Price, Category_Id) VALUES
+('Smartphone', 800, 1),
+('Laptop', 1200, 1),
+('T-Shirt', 20, 2),
+('Jeans', 50, 2),
+('Novel', 15, 3),
+('Cookbook', 25, 3),
+('Microwave', 150, 4),
+('Refrigerator', 800, 4);
+
+INSERT INTO ProductOrder (Product_Id, CustomerOrder_Id, Amount) VALUES
+(1, 1, 2),
+(2, 1, 1),
+(3, 2, 3),
+(4, 2, 2),
+(5, 3, 1),
+(6, 3, 1),
+(7, 4, 1),
+(8, 5, 1);
